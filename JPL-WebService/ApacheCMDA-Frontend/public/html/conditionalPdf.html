@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- for Bootstrap -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <!-- still needed? -->
+  <script src="js/jquery.flot.min.js"></script>
+  <script src="js/json2.js"></script>
+  <script src="js/xmisc.js"></script>
+
+  <!-- cmac related -->
+  <link rel="stylesheet" href="common.css">
+  <script src='js2/dataList2.js'></script>
+  <script src='js2/varList.js'></script>
+  <script src='js2/common.js'></script>
+
+  <title>Conditional Probability Density Function</title>
+
+  <script>
+
+    var Response = null;
+    var variable1 = "";
+    var variable2 = "";
+
+    var naValue = "-999999";
+    var defaultDataIndex = 0; // not used yet
+
+    
+    var isPressure1 = true;
+    
+    var pressDf1 = "500";
+    
+    //    
+
+    // called on load or reload
+    window.onload = function() {
+      
+      put_data(1);
+      put_var(1);
+      select_var(1);
+      put_data(2);
+      put_var(2);
+      select_var(2);
+      time_range2();
+      //fillMonth();
+
+      disable_download_button();
+
+      
+    }
+
+    $(document).ready(function(){
+      
+
+      $("a").click(function(event){
+        alert("As you can see, the link no longer took you to jquery.com");
+        event.preventDefault();
+      });
+
+
+      $("#download_data").click(function(event) {
+        var durl = $("#data_url").val();
+        // alert(durl);
+        window.location.assign(durl);
+      });
+
+
+      $("#action1").click(function(event) {
+        Response = null;
+
+        // no data to download yet
+        disable_download_button();
+
+        $("#Response").html("Calculating ...");
+        $("#data_url").html("Calculating ...");
+        $("#Image").html("");
+
+        // sample url: http://cmacws.jpl.nasa.gov:8090/svc/scatterPlot2V?model1=ukmo_hadgem2-a&var1=ts&pres1=200&model2=ukmo_hadgem2-a&var2=clt&pres2=200&start_time=199001&end_time=199512&lon1=0&lon2=100&lat1=-29&lat2=29
+        // form url string
+        // var url = "http://cmacws.jpl.nasa.gov:8090/svc/scatterPlot2V?";
+        var url = "http://" + window.location.hostname + ":8090/svc/conditionalPdf?";
+        // alert("url: " + url);
+        var arglist = "";
+
+/*
+        var d1 = $("#data1").val();
+        var model1 = d1.replace("/", "_");
+        model1 = model1.toLowerCase();
+
+        arglist = arglist.concat("model1=");
+        arglist = arglist.concat(model1);
+
+        // alert("arglist: " + arglist);
+
+        var variable1 = $("#var1").val();
+        arglist = arglist.concat("&var1=");
+        arglist = arglist.concat(variable1);
+
+        // alert("arglist: " + arglist);
+
+        var pres1 = $("#pres1").val();
+        arglist = arglist.concat("&pres1=");
+        arglist = arglist.concat(pres1);
+*/
+
+        var nVar = 2;
+        arglist = arglist.concat("&nVar=");
+        arglist = arglist.concat(nVar);
+
+        for (var i=0; i<nVar; i++) {
+          //alert(i) 
+          var d2 = $("#data"+(i+1)).val();
+          var model2 = d2.replace("/", "_");
+          model2 = model2.toLowerCase();
+
+          arglist = arglist.concat("&model"+(i+1)+"=");
+          arglist = arglist.concat(model2);
+
+          var variable2 = $("#var"+(i+1)).val();
+          arglist = arglist.concat("&var"+(i+1)+"=");
+          arglist = arglist.concat(variable2);
+
+          var pres2 = $("#pres"+(i+1)).val();
+          pres2 = parse_pres(pres2);
+          arglist = arglist.concat("&pres"+(i+1)+"=");
+          arglist = arglist.concat(pres2);
+        }
+
+        var t0 = $("#t0").val();
+        var t1 = $("#t1").val();
+
+        t0 = t0.replace("-", "");
+        t1 = t1.replace("-", "");
+
+        arglist = arglist.concat("&start_time=");
+        arglist = arglist.concat(t0);
+
+        arglist = arglist.concat("&end_time=");
+        arglist = arglist.concat(t1);
+
+        // alert("arglist: " + arglist);
+
+        var lon0 = $("#lon0").val();
+        var lon1 = $("#lon1").val();
+        var lat0 = $("#lat0").val();
+        var lat1 = $("#lat1").val();
+
+        arglist = arglist.concat("&lon1=");
+        arglist = arglist.concat(lon0);
+
+        arglist = arglist.concat("&lon2=");
+        arglist = arglist.concat(lon1);
+
+        arglist = arglist.concat("&lat1=");
+        arglist = arglist.concat(lat0);
+
+        arglist = arglist.concat("&lat2=");
+        arglist = arglist.concat(lat1);
+
+        //var anomaly = $("#anomaly").val();
+        var anomaly = document.getElementById("anomaly");
+        if (anomaly.checked == true) {
+          arglist = arglist.concat("&anomaly=1");
+        } else {
+          arglist = arglist.concat("&anomaly=0");
+        }
+
+        var nBinX = $("#nBinX").val();
+        arglist = arglist.concat("&nBinX=");
+        arglist = arglist.concat(nBinX);
+
+        var nBinY = $("#nBinY").val();
+        arglist = arglist.concat("&nBinY=");
+        arglist = arglist.concat(nBinY);
+
+        // alert("arglist: " + arglist);
+
+        // url = url + encodeURIComponent(arglist);
+        url = url + encodeURI(arglist);
+        // url = url + arglist;
+        //alert("url: " + url);
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            data: null,
+            success: function(data, textStatus, xhr) {
+                Response = data;
+                // alert("data: " + data);
+                if (data.success == false) {
+                    // alert(data.error);
+                    Response = null;
+                    var text = JSON.stringify(data, null, 4);
+
+                    if (text.indexOf("No Data") != -1) {
+                      $("#Image").html("No Data");
+                      $("#Response").html("No Data");
+                      $("#data_url").html("No Data");
+                      return;
+                    }
+
+                    text = "Error in backend: <br>" + text; 
+                    // $("#Response").html("<span style='color:red'>" + text + "</span>");
+                    $("#Response").html(text);
+                    $("#data_url").html(text);
+
+                    return;
+                }
+                var text = JSON.stringify(data, null, 4);
+                // alert(text);
+                // $("#Response").html("<pre>"+text+"</pre>");
+                $("#Response").html(text);
+
+                //var html = "<img src='"+data.url+"' width='820'/>";
+                var html = "<img src='"+data.url+"'/>";
+                // alert(html);
+                $("#Image").html(html);
+
+                // post dataUrl to textarea and enable download button
+                $("#data_url").html(data.dataUrl);
+                enable_download_button();
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#Response").html("error!");
+                $("#data_url").html("error!");
+                // alert("xhr.status: "+xhr.status);
+                // alert("error status: "+textStatus);
+            },
+            complete: function(xhr, textStatus) {
+                //alert("complete status: "+textStatus);
+            },
+        });
+
+      });
+      
+    });
+
+
+
+  </script>
+
+</head>
+
+<body>
+<div class="container-fluid">
+<div class="row center1">
+<div class="col-sm-8 col-sm-offset-2 col-xs-12 color-head">
+<h3>Service: Conditional Probability Density Function</h3>
+Conditional Probability Density Function  .....
+</div> <!-- col-sm -->
+<div class="col-sm-offset-2">
+</div> <!-- col-sm -->
+</div> <!-- row center1 -->
+
+
+
+<div class="color0">
+<div class="row ">
+<div class="col-sm-12 center1 subtitle1">
+Independent Variable
+</div>
+</div> <!-- row --> 
+
+<div class="row">
+ <div class="col-sm-4 right1">
+   model:
+  </div> <!-- col-sm-6 -->
+  <div class="col-sm-8 left1">
+    <select name="data1"  id="data1" onchange="put_var(1); select_var(1); time_range1()"></select>;
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+
+<div class="row">
+ <div class="col-sm-4 right1">
+   variable:
+  </div> <!-- col-sm-6 -->
+  <div class="col-sm-8 left1">
+    <select name="var1"  id="var1" onchange="select_var(1); time_range1()"></select>;
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+
+
+<div class="row">
+  <div class="col-sm-4 right1" id="pressureLabel1" >
+    pressure:
+  </div> <!-- col-sm-6 level2-->
+  <div class="col-sm-8 left1">
+    <input id="pres1" value="500"  alt="pressure" size=7>
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+ 
+
+</div> <!-- color0 -->
+ 
+<div class="color1">
+<div class="row ">
+<div class="col-sm-12 center1 subtitle1">
+Dependent Variable 
+</div>
+</div> <!-- row --> 
+
+<div class="row">
+ <div class="col-sm-4 right1">
+   model:
+  </div> <!-- col-sm-6 -->
+  <div class="col-sm-8 left1">
+    <select name="data2"  id="data2" onchange="put_var(2); select_var(2); time_range2()"></select>;
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+
+<div class="row">
+ <div class="col-sm-4 right1">
+   variable:
+  </div> <!-- col-sm-6 -->
+  <div class="col-sm-8 left1">
+    <select name="var2"  id="var2" onchange="select_var(2); time_range2()"></select>;
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-sm-4 right1" id="pressureLabel2" >
+    pressure:
+  </div> <!-- col-sm-6 level2-->
+  <div class="col-sm-8 left1">
+    <input id="pres2" value="500"  alt="pressure" size=7>
+  </div> <!-- col-sm-6 level2-->
+</div> <!-- row -->
+</div> <!-- color1 -->
+ 
+<div class="color3">
+<div class="row center1 subtitle1" >
+Data Subsetting
+</div> <!-- row -->
+
+
+<div class="row">
+  <div class="col-sm-4 right1">
+    <div id=startYear>start year-month:</div>
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="t0" value="2004-01" alt="start" size=7>
+  </div>
+
+  <div class="col-sm-4 right1">
+    <div id=endYear>end year-month:</div>
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="t1" value="2004-12" alt="end" size=7>
+  </div>
+</div> <!-- row -->
+
+
+<div class="row">
+  <div class="col-sm-4 right1">
+    start lon (deg):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="lon0" value="0" size=7>
+  </div>
+  <div class="col-sm-4 right1">
+    end lon (deg):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="lon1" value="360" size=7>
+  </div>
+</div> <!-- row -->
+
+
+<div class="row">
+  <div class="col-sm-4 right1">
+    start lat (deg):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="lat0" value="-90" size=7>
+  </div>
+  <div class="col-sm-4 right1">
+    end lat (deg):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="lat1" value="90" size=7>
+  </div>
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-sm-4 right1">
+    use anomaly:
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="anomaly" type="checkbox" name="anomaly" unchecked>
+  </div>
+</div> <!-- row -->
+
+<div class="row">
+  <div class="col-sm-4 right1">
+    number of bins (for independent variable):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="nBinX" value="10" size=7>
+  </div>
+
+  <div class="col-sm-4 right1">
+    number of bins (for dependent variable):
+  </div>
+  <div class="col-sm-2 left1">
+    <input id="nBinY" value="10" size=7>
+  </div>
+</div>
+
+
+</div> <!-- color3 -->
+
+
+
+<div class="color2">
+<div class="row">
+  <div class="col-sm-4 right1">
+    Execution purpose:
+  </div> <!-- col -->
+  <div class="col-sm-8 left1">
+    <form>
+    <textarea name="purpose" id="purpose" rows="4" cols="50"> </textarea>
+    </form>
+  </div> <!-- col -->
+</div> <!-- row -->
+</div> <!-- color2 -->
+
+<div class="color4">
+<div class="row">
+  <div class="col-sm-6 center1">
+    <input id="action1" type="submit" value="Get Plot" style="height:28px"/>
+  </div>
+  <div class="col-sm-6 center1">
+    <form>
+      <input id="download_data" type="button" value="Download Data" style="height:28px"/>
+    </form>
+  </div>
+</div> <!-- row -->
+
+</div> <!-- color4 -->
+ 			
+<div class="row" center1>
+  <div class="col-sm-12 center1">
+    <div id="Image">Image Here</div>
+  </div>
+</div> <!-- row -->
+
+<div class="row" >
+  <div class="col-sm-12 center1">
+    <textarea readonly id="data_url" cols="150" rows="2">Data URL Here</textarea>
+  </div>
+</div> <!-- row -->
+
+<div class="row" center1>
+  <div class="col-sm-12 center1">
+    <textarea id="Response" cols="150" rows="6">Service Response Text Here</textarea>
+  </div>
+</div> <!-- row -->
+
+</div> <!-- container -->
+</body>
+</html>

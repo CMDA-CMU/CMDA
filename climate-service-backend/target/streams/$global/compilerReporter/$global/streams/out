@@ -1,0 +1,5 @@
+[0m[[31merror[0m] [0m/Users/weiwang/climate-service-backend/conf/routes:169: value updatePicture is not a member of controllers.UtilController[0m
+[0m[[31merror[0m] [0mPOST		  /util/uploadPicture																		@controllers.UtilController.updatePicture[0m
+[0m[[31merror[0m] [0m/Users/weiwang/climate-service-backend/conf/routes:169: value updatePicture is not a member of controllers.UtilController[0m
+[0m[[31merror[0m] [0mPOST		  /util/uploadPicture																		@controllers.UtilController.updatePicture[0m
+[0m[[31merror[0m] [0mtwo errors found[0m

@@ -1,0 +1,24 @@
+. 2D Var Map
+  above Get Plot, create a new row,
+  Color Scale: Linear (default) or Log
+
+1  1  1 -> log
+0  0  0 -> linear
+
+Z      Y     X
+color lat   lon
+
+1 0 0 = 4 -> log
+0 0 0 = 0 -> linear
+
+. conditional Sampling
+  designed (from Seungwon)
+
+
+. todo:
+(1) add new variables:
+     "Vertical Wind Velocity" and "Relative Humidty" 
+     to all 3D services; (done)
+(2) add Reanalysis and 3 vars for all services;
+(3) check data availability for all services.
+

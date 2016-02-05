@@ -1,0 +1,50 @@
+===== 11/11/2015 =====
+
+. Docker installation on our JPL servers (Lei)
+  . pulled Docker container from CMU
+  . played container and ssh in as root
+  . git pulled the JPL-WebService code from github into container
+  . cleaned up the git code/doc repository
+  . able to commit/push changes in code/doc to remote github 
+  . created new user in container as root
+  . registered in dockerhub and pushed back new version of container
+  . need to figure out how to deploy using activator and port number config
+  . need to create more users
+  . need to change cmacws and cmacws2 to ubuntu and install Docker
+
+. Analysis tool development status (Chengxing, Benyang)
+  Benyang:
+  . 50+ arguments for random forrest, use a dictionary to replace argument list
+  . designed it and coding now
+
+  Chengxing:
+  . learned a lot of python programming
+  . working on app time series from entry.py to app level code entirely 
+  . time series app level code tested
+  . need help from Benyang on html page
+
+. Terry’s collaborator comments on our tool from a scientist perspective (Terry)
+  . make units changable (e.g., change to mm/day)
+  . need to change html, files, etc. as a team
+  . need to have a good design (which variables, what widgets to use, etc.)
+  . Terry to work on a high level requirement
+  . need to use masks to filter out land vs. ocean
+    use Google earth solution
+
+. How to formulate a proposal for infusion  
+  . (no time to discuss)
+
+. comments on GPU (K80)
+  . Benyang
+    will comment in the next meeting
+
+
+Features Tesla K80¹ Tesla K40
+GPU 2x Kepler GK210 1 Kepler GK110B
+Peak double precision floating point performance 2.91 Tflops (GPU Boost Clocks) 1.87 Tflops (Base Clocks) 1.66 Tflops (GPU Boost Clocks) 1.43 Tflops (Base Clocks)
+Peak single precision floating point performance 8.74 Tflops (GPU Boost Clocks) 5.6 Tflops (Base Clocks) 5 Tflops (GPU Boost Clocks) 4.29 Tflops (Base Clocks)
+Memory bandwidth (ECC off)² 480 GB/sec (240 GB/sec per GPU) 288 GB/sec
+Memory size (GDDR5) 24 GB (12GB per GPU) 12 GB
+CUDA cores 4992 ( 2496 per GPU) 2880
+price 12950  14950
+

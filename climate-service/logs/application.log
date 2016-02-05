@@ -1,0 +1,30 @@
+2015-12-10 17:28:42,488 - [INFO] - from play in play-fork-run-akka.actor.default-dispatcher-4 
+Listening for HTTP on /0:0:0:0:0:0:0:0:9032
+
+2015-12-10 17:28:55,345 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2015-12-10 17:28:56,047 - [INFO] - from application in play-akka.actor.default-dispatcher-3 
+http://localhost:9035/users/getAllUsername/json
+
+2015-12-10 17:28:56,616 - [INFO] - from application in play-akka.actor.default-dispatcher-3 
+http://localhost:9035/climateService/getAllClimateServices/json
+
+2015-12-10 17:28:56,689 - [INFO] - from application in play-akka.actor.default-dispatcher-3 
+http://localhost:9035/climateService/getAllClimateServices/json
+
+2015-12-10 17:28:56,706 - [INFO] - from application in play-akka.actor.default-dispatcher-3 
+http://localhost:9035/comment/getComment/3/1/null/json
+
+2015-12-10 17:33:54,016 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+http://localhost:9035/users/getAllUsername/json
+
+2015-12-10 17:33:54,029 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+http://localhost:9035/climateService/getAllClimateServices/json
+
+2015-12-10 17:33:54,061 - [INFO] - from application in play-akka.actor.default-dispatcher-8 
+http://localhost:9035/climateService/getAllClimateServices/json
+
+2015-12-10 17:33:54,073 - [INFO] - from application in play-akka.actor.default-dispatcher-8 
+http://localhost:9035/comment/getComment/3/1/null/json
+

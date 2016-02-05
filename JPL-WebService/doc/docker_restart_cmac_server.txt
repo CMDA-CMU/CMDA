@@ -1,0 +1,32 @@
+Here are a few commands and directories I use when working with the docker instance:
+
+== a few directories:
+
+The html/js files:
+/home/svc/JPL-WebService/ApacheCMDA-Frontend/public/html/
+
+the service code files:
+/home/svc/JPL-WebService/services/svc/svc/src/
+
+run.py, start.sh:
+/home/svc/JPL-WebService/services/svc/
+
+entry.py:
+ /home/svc/JPL-WebService/services/svc/svc/services/
+
+== commands
+
+Do the following as the user "svc".
+
+# to kill all python processes (including the gunicorn)
+/home/bytang/bin/mine/killps -p python -e
+
+# to list all python processes but not to kill:
+/home/bytang/bin/mine/killps -p python
+
+# to start the server in the background:
+cd /home/svc/JPL-WebService/services/svc
+./start.sh
+
+# to start the server in the foreground (for debugging)
+python run.py
